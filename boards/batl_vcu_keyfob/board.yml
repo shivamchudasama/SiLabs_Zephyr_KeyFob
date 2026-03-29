@@ -1,0 +1,28 @@
+# board.yml — Board Identity File
+#
+# This file tells Zephyr's build system WHO this board is.
+# It's the first file Zephyr reads when you pass "-b BATL_VCU_KeyFob".
+#
+# The 'name' must match the directory name and the filenames of your
+# .dts and _defconfig files. If they don't match, the build system
+# won't find them.
+#
+# The 'socs' entry links this board to a SoC definition that already
+# exists in zephyr/soc/silabs/. The SoC definition provides the CPU
+# architecture, interrupt controller, memory map, and peripheral
+# register addresses.
+#
+# IMPORTANT: If building fails with "SoC not found", you need to check
+# what SoC identifiers exist in your workspace under zephyr/soc/silabs/.
+# The BG24 and MG24 share the same die, so the SoC definition might be
+# listed under a generic "efr32xg24" or "efr32mg24" name that also
+# covers your BG24 part. In that case, use that SoC name here instead.
+#
+# To find available SoC names, run:
+#   find <workspace>/zephyr/soc/silabs -name "*.yml" | xargs grep -l "bg24\|xg24\|mg24"
+
+board:
+  name: batl_vcu_keyfob
+  vendor: BATL
+  socs:
+    - name: efr32bg24a010f1024im48

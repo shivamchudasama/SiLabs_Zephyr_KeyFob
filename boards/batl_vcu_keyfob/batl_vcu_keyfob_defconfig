@@ -1,0 +1,46 @@
+# my_bg24_keyless_defconfig — Default Kconfig for Custom BG24 Board
+#
+# =============================================================================
+# WHAT THIS FILE DOES
+# =============================================================================
+#
+# This file sets default Kconfig values that are ALWAYS applied when someone
+# builds for your board. Think of it as "the minimum software configuration
+# that makes this board work."
+#
+# These settings are applied BEFORE your application's prj.conf, so your
+# app can override them if needed.
+#
+# Convention: Only put hardware-related essentials here. Application-specific
+# settings (like BLE advertising parameters) go in your app's prj.conf.
+# =============================================================================
+
+# ---- GPIO ----
+# Your board has an LED on PB00, so GPIO must be enabled.
+# Without this, the gpio-leds driver won't be compiled.
+CONFIG_GPIO=y
+
+# ---- Bluetooth ----
+# Enable the Bluetooth stack core
+CONFIG_BT=y
+# Use Silicon Labs' proprietary HCI driver (RAIL-based link layer).
+# This is the equivalent of CONFIG_BT_LL_SOFTDEVICE on Nordic — it tells
+# Zephyr which BLE controller implementation to use.
+CONFIG_BT_SILABS_EFR32=y
+
+# ---- ARM Cortex-M33 Features ----
+# Enable the Memory Protection Unit for stack overflow detection
+# and memory isolation. Important for a security-critical system.
+CONFIG_ARM_MPU=y
+CONFIG_HW_STACK_PROTECTION=y
+
+# ---- FPU ----
+# The EFR32BG24 Cortex-M33 has a hardware FPU.
+# The SiLabs BLE blobs (liblinklayer, libbgcommon, librail) are compiled
+# with -mfloat-abi=hard (VFP register args), so the app must match.
+CONFIG_FPU=y
+CONFIG_FPU_SHARING=y
+
+# ---- Watchdog ----
+# Enable watchdog driver (we enabled wdog0 in DTS)
+CONFIG_WATCHDOG=y

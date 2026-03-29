@@ -1,0 +1,27 @@
+# Kconfig.batl_vcu_keyfob — Board Identity in the Kconfig Tree
+#
+# =============================================================================
+# WHAT THIS FILE DOES
+# =============================================================================
+#
+# This file registers your board in Zephyr's Kconfig system. When you pass
+# "-b batl_vcu_keyfob" to west build, the build system defines the symbol
+# BOARD_BATL_VCU_KEYFOB automatically. This file then uses 'select' to pull
+# in the correct SoC configuration.
+#
+# The 'select' statement is a Kconfig mechanism that forces another symbol
+# to be enabled. So 'select SOC_EFR32BG24A010F1024IM48' means: "when this
+# board is chosen, automatically enable the SoC configuration for the
+# EFR32BG24A010F1024IM48."
+#
+# IMPORTANT: The SOC symbol name must match what's defined in the Zephyr
+# SoC Kconfig tree under zephyr/soc/silabs/. If the exact part number
+# isn't defined as a Kconfig symbol, you may need to use a broader family
+# symbol like SOC_EFR32BG24 or SOC_SERIES_EFR32BG24.
+#
+# To find available SoC Kconfig symbols, search:
+#   grep -r "SOC_EFR32BG24\|SOC_SERIES_EFR32BG24" <workspace>/zephyr/soc/silabs/
+# =============================================================================
+
+config BOARD_BATL_VCU_KEYFOB
+	select SOC_EFR32BG24A010F1024IM48

@@ -1,0 +1,270 @@
+/*
+ * batl_vcu_keyfob.dts — Device Tree Source for Custom BG24 Keyless Access Board
+ *
+ * =============================================================================
+ * HOW TO READ THIS FILE
+ * =============================================================================
+ *
+ * This file describes YOUR board's hardware in a structured, hierarchical format.
+ * Zephyr's build system reads this at compile time and generates C macros that
+ * drivers use to configure themselves — no manual init code needed.
+ *
+ * The first line (#include) pulls in the SoC-level Device Tree that defines
+ * everything INSIDE the EFR32BG24 chip. That file declares all peripherals
+ * (USART, GPIO, timers, flash, etc.) with status = "disabled" by default.
+ *
+ * Everything below the #include is YOUR board-specific configuration:
+ * what you enable, how you wire things, and what external components exist.
+ *
+ * IMPORTANT: If the #include path below doesn't exist in your workspace,
+ * you need to find the correct SoC DTSI path. Check:
+ *   find <workspace>/zephyr/dts/arm/silabs -name "*bg24*" -o -name "*xg24*"
+ *
+ * The BG24 and MG24 share the same silicon, so the DTSI might be named
+ * after the MG24 or xG24 generically. Use whatever file exists.
+ * =============================================================================
+ */
+
+/dts-v1/;
+#include <silabs/xg24/efr32bg24a010f1024im48.dtsi>
+
+/ {
+	/*
+	 * 'model' — A human-readable string. Shows up in logs and documentation.
+	 *           No functional impact, but helps identify the board.
+	 *
+	 * 'compatible' — Tells Zephyr which board-level bindings apply.
+	 *                Format is "vendor,board-name". This must be unique.
+	 */
+	model = "BATL VCU KeyFob Board";
+	compatible = "batl,vcu-keyfob";
+
+	/*
+	 * =================================================================
+	 * 'chosen' node — System-Level Hardware Assignments
+	 * =================================================================
+	 *
+	 * This is where you tell Zephyr: "For system function X, use hardware Y."
+	 * These are NOT optional for a working system — if you don't set
+	 * zephyr,sram and zephyr,flash, the build will fail.
+	 *
+	 * zephyr,sram       — Which memory node to use as main RAM
+	 * zephyr,flash      — Which flash node to use for code storage
+	 * zephyr,code-partition — Which flash partition holds the application
+	 *                         (needed when using MCUboot)
+	 * zephyr,bt-hci     — Which HCI transport to use for Bluetooth.
+	 *                     For Silicon Labs, this is the proprietary RAIL-based
+	 *                     HCI driver (bt_hci_silabs).
+	 *
+	 * NOTE: zephyr,console and zephyr,shell-uart are NOT set here because
+	 * you asked to skip UART configuration for now. When you add UART later,
+	 * uncomment those lines.
+	 */
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,bt-hci = &bt_hci_silabs;
+		/* Uncomment when UART is configured:
+		 * zephyr,console = &usart0;
+		 * zephyr,shell-uart = &usart0;
+		 */
+	};
+
+	/*
+	 * =================================================================
+	 * 'aliases' node — Named References for Zephyr Samples
+	 * =================================================================
+	 *
+	 * Zephyr's built-in samples (blinky, button, etc.) look for aliases
+	 * like 'led0', 'sw0'. By defining them here, those samples work on
+	 * your board without modification.
+	 *
+	 * The &status_led reference points to the node labeled 'status_led'
+	 * defined in the 'leds' node below.
+	 */
+	aliases {
+		led0 = &status_led;
+		watchdog0 = &wdog0;
+	};
+
+	/*
+	 * =================================================================
+	 * LED Definition
+	 * =================================================================
+	 *
+	 * 'compatible = "gpio-leds"' tells Zephyr to use the generic GPIO LED
+	 * driver for all child nodes.
+	 *
+	 * 'gpios' property breakdown:
+	 *   <&gpiob 0 GPIO_ACTIVE_HIGH>
+	 *    ^^^^^  ^  ^^^^^^^^^^^^^^^
+	 *    |      |  |
+	 *    |      |  GPIO flag: LED turns ON when GPIO is driven HIGH
+	 *    |      Pin number: 0 (PB00)
+	 *    Reference to GPIO port B controller node (defined in SoC DTSI)
+	 *
+	 * If your LED were active-low (common with some LED circuits where the
+	 * GPIO sinks current), you'd use GPIO_ACTIVE_LOW instead.
+	 */
+	leds {
+		compatible = "gpio-leds";
+		status_led: led_0 {
+			gpios = <&gpiob 0 GPIO_ACTIVE_HIGH>;
+			label = "Status LED";
+		};
+	};
+};
+
+/*
+ * =============================================================================
+ * Clock Configuration
+ * =============================================================================
+ *
+ * This is one of the most critical sections for your board. Getting clocks
+ * wrong means BLE won't work, or the chip runs at the wrong frequency.
+ *
+ * Your board has a 40 MHz HFXO crystal (for Channel Sounding support).
+ * The radio MUST be clocked from HFXO — the internal RC oscillator isn't
+ * accurate enough for BLE.
+ *
+ * Clock tree flow:
+ *   40 MHz HFXO → feeds DPLL → 80 MHz system clock (HCLK)
+ *   LFRCO (internal) → 32.768 kHz low-frequency clock (with precision mode)
+ *
+ * DPLL calculation:
+ *   fout = fref × (n + 1) / (m + 1)
+ *   80 MHz = 40 MHz × (3999 + 1) / (1999 + 1)
+ *   80 MHz = 40 MHz × 4000 / 2000
+ *   80 MHz = 40 MHz × 2 ✓
+ *
+ *   Higher n/m values → lower jitter but longer lock time.
+ *   3999/1999 is a good balance for BLE applications.
+ */
+
+/*
+ * CPU clock frequency — must match the DPLL output frequency (80 MHz).
+ * Zephyr reads this from /cpus/cpu@0 to set SYS_CLOCK_HW_CYCLES_PER_SEC.
+ */
+&cpu0 {
+	clock-frequency = <DT_FREQ_M(80)>;
+};
+
+&hfxo {
+	clock-frequency = <40000000>;  				/* 40 MHz — matches your board crystal */
+	status = "okay";
+};
+
+&hfrcodpll {
+	clocks = <&hfxo>;                     		/* Lock DPLL to HFXO */
+	clock-frequency = <DT_FREQ_M(80)>;    		/* Target: 80 MHz output */
+	dpll-n = <3999>;                      		/* DPLL N divider */
+	dpll-m = <1999>;                      		/* DPLL M divider */
+	dpll-edge = "fall";                   		/* Lock on falling edge */
+	dpll-lock = "phase";                  		/* Phase-lock mode */
+	dpll-autorecover;                     		/* Auto-recover if lock is lost */
+};
+
+/*
+ * LFRCO Precision Mode
+ *
+ * Since your board has NO external 32.768 kHz crystal (LFXO), the system
+ * uses the internal Low-Frequency RC Oscillator (LFRCO) at ~32.768 kHz.
+ *
+ * Problem: The bare LFRCO has poor accuracy (~±2% over temperature).
+ * BLE requires ~500 ppm (0.05%) accuracy for connection timing.
+ *
+ * Solution: Precision mode periodically calibrates the LFRCO against the
+ * accurate HFXO. This brings accuracy to ~500 ppm — good enough for BLE.
+ *
+ * Without this property, BLE connections will be unreliable or fail.
+ */
+&lfrco {
+	precision-mode;
+};
+
+/*
+ * =============================================================================
+ * Flash Partition Layout
+ * =============================================================================
+ *
+ * Your BG24 has 1024 KB (1 MB) of flash. This partition table divides it
+ * into regions for the bootloader, application, OTA update slot, and storage.
+ *
+ * For a vehicle keyless access system, OTA update capability is important
+ * for deploying security patches in the field. This layout supports MCUboot
+ * with dual-slot (swap) upgrade.
+ *
+ * Memory map:
+ *   0x00000000 - 0x0000BFFF : MCUboot bootloader (48 KB)
+ *   0x0000C000 - 0x00081FFF : Primary application (slot0) (472 KB)
+ *   0x00082000 - 0x000F7FFF : Secondary/update slot (slot1) (472 KB)
+ *   0x000F8000 - 0x000FFFFF : NVS settings storage (32 KB)
+ *
+ * Total: 48 + 472 + 472 + 32 = 1024 KB ✓
+ *
+ * Note: Flash base address on Series 2 is 0x08000000, but the addresses
+ * in 'reg' are offsets from flash0's base, not absolute addresses.
+ */
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 DT_SIZE_K(472)>;
+		};
+
+		slot1_partition: partition@82000 {
+			label = "image-1";
+			reg = <0x00082000 DT_SIZE_K(472)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000F8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+/*
+ * =============================================================================
+ * BLE HCI (Host Controller Interface)
+ * =============================================================================
+ *
+ * This enables the Silicon Labs proprietary BLE controller.
+ * Unlike Nordic (where the BLE controller is open-source), Silicon Labs
+ * uses pre-compiled RAIL libraries for the link layer.
+ *
+ * The bt_hci_silabs node is defined in the SoC DTSI. We just enable it.
+ * The actual RAIL libraries are fetched by 'west blobs fetch hal_silabs'.
+ *
+ * The BLE link layer runs as a meta-IRQ cooperative thread at the highest
+ * priority, using interrupt priorities 0-2 (above BASEPRI).
+ */
+&bt_hci_silabs {
+	status = "okay";
+};
+
+/*
+ * =============================================================================
+ * Watchdog Timer
+ * =============================================================================
+ *
+ * For a vehicle keyless access system, a watchdog is essential.
+ * It's defined in the SoC DTSI; we just enable it here.
+ */
+&gpiob {
+	status = "okay";
+};
+
+&wdog0 {
+	status = "okay";
+};

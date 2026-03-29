@@ -1,0 +1,35 @@
+# Kconfig.defconfig — Override Defaults for Existing Kconfig Symbols
+#
+# =============================================================================
+# WHAT THIS FILE DOES
+# =============================================================================
+#
+# This file is different from the _defconfig file. While _defconfig sets
+# values in a .conf format (KEY=VALUE), this file uses Kconfig syntax
+# to override DEFAULT values of existing symbols.
+#
+# Use this when you need to change the default of a symbol that's defined
+# somewhere else in the Zephyr tree. Common uses:
+#   - Setting default stack sizes
+#   - Changing default peripheral configurations
+#   - Adjusting buffer sizes for your hardware constraints
+#
+# The 'if BOARD_BATL_VCU_KEYFOB' guard ensures these overrides only apply
+# when building for your board.
+# =============================================================================
+
+if BOARD_BATL_VCU_KEYFOB
+
+# No additional default overrides needed at this point.
+# When you add UART later, you might add something like:
+#
+# config SERIAL
+#     default y
+#
+# config CONSOLE
+#     default y
+#
+# config UART_CONSOLE
+#     default y
+
+endif # BOARD_BATL_VCU_KEYFOB
