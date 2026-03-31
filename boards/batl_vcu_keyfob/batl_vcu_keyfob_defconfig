@@ -38,8 +38,8 @@ CONFIG_GPIO=y
 # # The EFR32BG24 Cortex-M33 has a hardware FPU.
 # # The SiLabs BLE blobs (liblinklayer, libbgcommon, librail) are compiled
 # # with -mfloat-abi=hard (VFP register args), so the app must match.
-# CONFIG_FPU=y
-# CONFIG_FPU_SHARING=y
+CONFIG_FPU=y
+CONFIG_FPU_SHARING=y
 
 # # ---- Watchdog ----
 # # Enable watchdog driver (we enabled wdog0 in DTS)

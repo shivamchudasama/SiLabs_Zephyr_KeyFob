@@ -14,9 +14,12 @@
 # boards). Without it, 'west build -b my_bg24_keyless' will fail with
 # "board not found."
 #
-# With BOARD_ROOT set here, you can simply run:
+# With BOARD_ROOT set here, you can build the application directly with:
 #   west build -p always -b my_bg24_keyless .
 # from this directory, without needing -DBOARD_ROOT on the command line.
+#
+# Sysbuild is different: it evaluates <app>/sysbuild/CMakeLists.txt first, so
+# BOARD_ROOT must also be defined there for sysbuild builds to find this board.
 # =============================================================================
 
 cmake_minimum_required(VERSION 3.20.0)
