@@ -12,6 +12,7 @@
 /*                                  INCLUDES                                  */
 /*                                                                            */
 /******************************************************************************/
+#include <zephyr/drivers/gpio.h>
 // #include "CSR_Generator.h"
 // #include "DeviceCert.h"
 #include "ConnectionHandling.h"
@@ -37,7 +38,7 @@
  * port/pin numbers. If you move the LED to a different pin, you only
  * change the DTS file, not the C code.
  */
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+static const struct gpio_dt_spec sst_led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 /******************************************************************************/
 /*                                                                            */
@@ -57,18 +58,16 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
  */
 int main(void)
 {
-   /* Configure the LED GPIO pin */
-	if (!gpio_is_ready_dt(&led))
+   // Check if the GPIO port is ready for the LED GPIO pin
+	if (!gpio_is_ready_dt(&sst_led))
    {
 		return -ENODEV;
 	}
-	gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	gpio_pin_configure_dt(&sst_led, GPIO_OUTPUT_ACTIVE);
 
-   while (1)
-   {
-		gpio_pin_toggle_dt(&led);
-		k_msleep(1000);
-	}
+   // Turn on LED to indicate device is powered on
+   gpio_pin_set_dt(&sst_led, 1);
+   LOG_INF("Custom board turned ON!!");
 
    // // Check if loading the device certificate from ITS completed successfully
    // if (PSA_SUCCESS == gt_LoadStoredDeviceCert())
