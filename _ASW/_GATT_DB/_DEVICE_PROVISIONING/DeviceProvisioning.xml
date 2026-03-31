@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- ===================================================== -->
+<!-- BLE ECU DEVICE PROVISIONING GATT DATABASE             -->
+<!-- Target: Zephyr RTOS                                   -->
+<!-- ===================================================== -->
+
+<gatt
+    name="DEVICE PROVISIONING">
+
+  <!-- =================================================== -->
+  <!-- DEVICE PROVISIONING SERVICE                         -->
+  <!-- =================================================== -->
+  <service
+      name="Device Provisioning"
+      uuid="01010000-6874-489E-A0E9-DC5FD5C3FD7E"
+      advertise="true">
+
+    <!-- ================================================= -->
+    <!-- CSR DATA CHARACTERISTIC                           -->
+    <!-- ================================================= -->
+    <characteristic
+        name="CSR Data"
+        uuid="01010001-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="read"
+        permissions="read">
+
+      <value
+          type="uint8"
+          length="244"
+          variable_length="true"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- DEVICE CERTIFICATE DATA CHARACTERISTIC            -->
+    <!-- ================================================= -->
+    <characteristic
+        name="Device Certificate Data"
+        uuid="01010002-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="write"
+        permissions="write">
+
+      <value
+          type="uint8"
+          max_length="244"
+          variable_length="true"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- CSR GENERATION STATUS CHARACTERISTIC              -->
+    <!-- ================================================= -->
+    <characteristic
+        name="CSR Generation Status"
+        uuid="01010003-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="read"
+        permissions="read">
+
+      <value
+          type="uint8"
+          length="1"
+          variable_length="false"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- DEVICE CERTIFICATE RECEIVED STATUS CHARACTERISTIC -->
+    <!-- ================================================= -->
+    <characteristic
+        name="Device Certificate Received Status"
+        uuid="01010004-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="write"
+        permissions="write">
+
+      <value
+          type="uint8"
+          length="1"
+          variable_length="false"/>
+    </characteristic>
+  </service>
+</gatt>

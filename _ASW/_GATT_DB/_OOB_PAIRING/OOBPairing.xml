@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- ===================================================== -->
+<!-- BLE ECU OOB PAIRING GATT DATABASE                     -->
+<!-- Target: Zephyr RTOS                                   -->
+<!-- ===================================================== -->
+
+<gatt
+    name="OOB PAIRING">
+
+  <!-- =================================================== -->
+  <!-- OOB PAIRING SERVICE                                 -->
+  <!-- =================================================== -->
+  <service
+      name="OOB Pairing"
+      uuid="01020000-6874-489E-A0E9-DC5FD5C3FD7E"
+      advertise="true">
+
+    <!-- ================================================= -->
+    <!-- IS READY TO PAIR CHARACTERISTIC                   -->
+    <!-- ================================================= -->
+    <characteristic
+        name="Is Ready To Pair"
+        uuid="01020001-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="read"
+        permissions="read">
+
+      <value
+          type="uint8"
+          length="1"
+          variable_length="false"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- IS PAIRING TRIGGERED DATA CHARACTERISTIC          -->
+    <!-- ================================================= -->
+    <characteristic
+        name="Is Pairing Triggered"
+        uuid="01020002-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="write"
+        permissions="write">
+
+      <value
+          type="uint8"
+          length="1"
+          variable_length="false"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- TARGET DEVICE TO PAIR CHARACTERISTIC              -->
+    <!-- ================================================= -->
+    <characteristic
+        name="Target Device To Pair"
+        uuid="01020003-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="write"
+        permissions="write">
+
+      <value
+          type="uint8"
+          length="6"
+          variable_length="false"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- PAIRING STATUS CHARACTERISTIC                     -->
+    <!-- ================================================= -->
+    <characteristic
+        name="Pairing Status"
+        uuid="01020004-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="read"
+        permissions="read">
+
+      <value
+          type="uint8"
+          length="1"
+          variable_length="false"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- ECU ROLE CHARACTERISTIC                           -->
+    <!-- ================================================= -->
+    <characteristic
+        name="ECU Role"
+        uuid="01020005-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="write"
+        permissions="write">
+
+      <value
+          type="uint8"
+          length="1"
+          variable_length="false"/>
+    </characteristic>
+
+    <!-- ================================================= -->
+    <!-- OOB DATA CHARACTERISTIC                           -->
+    <!-- ================================================= -->
+    <characteristic
+        name="OOB Data"
+        uuid="01020006-6874-489E-A0E9-DC5FD5C3FD7E"
+        properties="read"
+        permissions="read">
+
+      <value
+          type="uint8"
+          length="96"
+          variable_length="false"/>
+    </characteristic>
+  </service>
+</gatt>

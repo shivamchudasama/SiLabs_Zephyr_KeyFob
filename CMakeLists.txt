@@ -33,4 +33,5 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(BATL_VCU_KeyFob)
 
-target_sources(app PRIVATE main.c)
+add_subdirectory(_ASW)
+# target_sources(app PRIVATE main.c)

@@ -20,19 +20,19 @@
 # Without this, the gpio-leds driver won't be compiled.
 CONFIG_GPIO=y
 
-# # ---- Bluetooth ----
-# # Enable the Bluetooth stack core
-# CONFIG_BT=y
-# # Use Silicon Labs' proprietary HCI driver (RAIL-based link layer).
-# # This is the equivalent of CONFIG_BT_LL_SOFTDEVICE on Nordic — it tells
-# # Zephyr which BLE controller implementation to use.
-# CONFIG_BT_SILABS_EFR32=y
+# ---- Bluetooth ----
+# Enable the Bluetooth stack core
+CONFIG_BT=y
+# Use Silicon Labs' proprietary HCI driver (RAIL-based link layer).
+# This is the equivalent of CONFIG_BT_LL_SOFTDEVICE on Nordic — it tells
+# Zephyr which BLE controller implementation to use.
+CONFIG_BT_SILABS_EFR32=y
 
-# # ---- ARM Cortex-M33 Features ----
-# # Enable the Memory Protection Unit for stack overflow detection
-# # and memory isolation. Important for a security-critical system.
-# CONFIG_ARM_MPU=y
-# CONFIG_HW_STACK_PROTECTION=y
+# ---- ARM Cortex-M33 Features ----
+# Enable the Memory Protection Unit for stack overflow detection
+# and memory isolation. Important for a security-critical system.
+CONFIG_ARM_MPU=y
+CONFIG_HW_STACK_PROTECTION=y
 
 # ---- FPU ----
 # The EFR32BG24 Cortex-M33 has a hardware FPU.
