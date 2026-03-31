@@ -33,6 +33,4 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(BATL_VCU_KeyFob)
 
-test_sysbuild()
-
 target_sources(app PRIVATE main.c)
