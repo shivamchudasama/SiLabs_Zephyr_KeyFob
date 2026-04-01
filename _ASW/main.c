@@ -65,6 +65,13 @@ int main(void)
 	}
 	gpio_pin_configure_dt(&sst_led, GPIO_OUTPUT_ACTIVE);
 
+   // while (1)
+   // {
+	// 	gpio_pin_toggle_dt(&sst_led);
+   //    LOG_INF("Custom board LED toggled!!");
+	// 	k_msleep(1000);
+	// }
+
    // Turn on LED to indicate device is powered on
    gpio_pin_set_dt(&sst_led, 1);
    LOG_INF("Custom board turned ON!!");

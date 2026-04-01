@@ -169,11 +169,6 @@
 	dpll-autorecover;                     		/* Auto-recover if lock is lost */
 };
 
-&lfxo {
-	ctune = <44>;
-	precision = <50>;
-	status = "okay";
-};
 /*
  * LFRCO Precision Mode
  *
@@ -190,6 +185,7 @@
  */
 &lfrco {
 	precision-mode;
+   status = "okay";
 };
 
 /*
