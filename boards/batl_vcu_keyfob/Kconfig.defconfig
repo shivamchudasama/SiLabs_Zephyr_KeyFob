@@ -20,6 +20,15 @@
 
 if BOARD_BATL_VCU_KEYFOB
 
+config MAIN_STACK_SIZE
+	default 2304
+
+config CMU_HFXO_FREQ
+	default 40000000
+
+config CMU_LFXO_FREQ
+	default 32768
+
 # No additional default overrides needed at this point.
 # When you add UART later, you might add something like:
 #

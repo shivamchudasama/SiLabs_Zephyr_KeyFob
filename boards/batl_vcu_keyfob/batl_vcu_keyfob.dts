@@ -148,11 +148,15 @@
  */
 &cpu0 {
 	clock-frequency = <DT_FREQ_M(80)>;
+   cpu-power-states = <&pstate_em1>;
 };
 
 &hfxo {
 	clock-frequency = <40000000>;  				/* 40 MHz — matches your board crystal */
-	status = "okay";
+   ctune = <82>;
+	precision = <30>;
+   status = "okay";
+   mode = "xtal";
 };
 
 &hfrcodpll {
@@ -165,6 +169,11 @@
 	dpll-autorecover;                     		/* Auto-recover if lock is lost */
 };
 
+&lfxo {
+	ctune = <44>;
+	precision = <50>;
+	status = "okay";
+};
 /*
  * LFRCO Precision Mode
  *
@@ -255,6 +264,15 @@
 	status = "okay";
 };
 
-&wdog0 {
-	status = "okay";
+// &wdog0 {
+// 	status = "okay";
+// };
+
+&radio {
+	pa-voltage-mv = <1800>;
+};
+
+&dcdc {
+	silabs,pfmx-peak-current-milliamp = <120>;
+   status = "okay";
 };
