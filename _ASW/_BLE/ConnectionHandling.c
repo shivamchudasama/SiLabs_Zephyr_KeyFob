@@ -94,6 +94,7 @@ static void sv_PHYUpdated(struct bt_conn *stpt_conn, struct bt_conn_le_phy_info 
 static void sv_DataLengthUpdated(struct bt_conn *stpt_conn,
    struct bt_conn_le_data_len_info *stpt_dataLenInfo);
 static void sv_ResetConnNegotiationState(void);
+static void bt_ready(int err);
 
 /******************************************************************************/
 /*                                                                            */
@@ -614,6 +615,17 @@ static void sv_DataLengthUpdated(struct bt_conn *stpt_conn,
    }
 }
 
+static void bt_ready(int err)
+{
+   LOG_INF("bt_ready() called with err=%d", err);
+   if (err) {
+      LOG_ERR("Bluetooth init failed (err %d)", err);
+      return;
+   }
+   LOG_INF("Bluetooth initialized");
+   // start advertising here
+}
+
 /******************************************************************************/
 /*                                                                            */
 /*                        PUBLIC FUNCTION DEFINITIONS                         */
@@ -634,7 +646,7 @@ void gv_BLEInitStartAdv(void)
    LOG_INF("Initializing Bluetooth...");
 
    // Enable Bluetooth
-   i_err = bt_enable(NULL);
+   i_err = bt_enable(bt_ready);
 
    // Check if Bluetooth initialization wasn't successful
 	if (i_err)

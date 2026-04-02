@@ -149,10 +149,11 @@
 &cpu0 {
 	clock-frequency = <DT_FREQ_M(80)>;
    cpu-power-states = <&pstate_em1>;
+   status = "okay";
 };
 
 &hfxo {
-	clock-frequency = <40000000>;  				/* 40 MHz — matches your board crystal */
+	clock-frequency = <DT_FREQ_M(40)>;        /* 40 MHz — matches your board crystal */
    ctune = <82>;
 	precision = <30>;
    status = "okay";
@@ -167,6 +168,7 @@
 	dpll-edge = "fall";                   		/* Lock on falling edge */
 	dpll-lock = "phase";                  		/* Phase-lock mode */
 	dpll-autorecover;                     		/* Auto-recover if lock is lost */
+   status = "okay";
 };
 
 /*
@@ -266,6 +268,7 @@
 
 &radio {
 	pa-voltage-mv = <1800>;
+   status = "okay";
 };
 
 &dcdc {
